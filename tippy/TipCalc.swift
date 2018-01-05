@@ -12,13 +12,19 @@ class TipCalc {
     var amountBefore: Float = 0
     var tipPercentage: Float = 0
     var totalAmount: Float = 0
-    
-    init(amountBefore: Float, tipPercentage: Float) {
+    var numberOfPeople: Int = 0
+    var amountPerPerson: Float = 0
+    init(amountBefore: Float, tipPercentage: Float, numberOfPeople: Int) {
         self.amountBefore = amountBefore
         self.tipPercentage = tipPercentage
+        self.numberOfPeople = numberOfPeople
     }
     public func calculateTip () {
+        if amountBefore == 0 {
+            amountPerPerson = 0
+        }
         tipAmount = amountBefore * tipPercentage
         totalAmount = tipAmount + amountBefore
+        amountPerPerson = totalAmount/Float(numberOfPeople)
     }
 }

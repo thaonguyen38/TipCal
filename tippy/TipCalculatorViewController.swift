@@ -21,7 +21,7 @@ class TipCalculatorViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var amountPerPerson: UILabel!
     
     //MARK: - Properties
-    var tipCalc = TipCalc(amountBefore: 0.00, tipPercentage: 0.15)
+    var tipCalc = TipCalc(amountBefore: 0.00, tipPercentage: 0.15, numberOfPeople: 1)
     
     //MARK: - View Controller Lifecycle
 
@@ -30,27 +30,28 @@ class TipCalculatorViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 //        billField.text = String(format: "$%0.2f", arguments: [tipCalc.amountBefore])
         tipPercentLabel.text = String(format: "Tip %d%%", arguments: [Int(tipCalc.tipPercentage*100)])
+        numberOfPeopleLabel.text = String(format: "Split: %d", arguments: [tipCalc.numberOfPeople])
+        self.billField.becomeFirstResponder()
+        self.billField.keyboardAppearance = UIKeyboardAppearance.dark
     }
     
     func calcTip(){
         tipCalc.tipPercentage = Float(tipPercentSlider.value)
         tipCalc.amountBefore = Float(billField.text!) ?? 0
+        tipCalc.numberOfPeople = Int(numPeopleSlider.value * 100)
         tipCalc.calculateTip()
         updateUI()
     }
     
     func updateUI() {
         resultLabel.text = String(format: "Total: $%0.2f Tip: $%0.2f", arguments: [tipCalc.totalAmount, tipCalc.tipAmount])
+        amountPerPerson.text = String(format: "Each Person: $%.2f", arguments: [tipCalc.amountPerPerson])
     }
     
     //MARK: - UIControl Events
     
     @IBAction func billFieldChanged(_ sender: Any) {
         calcTip()
-    }
-
-    @IBAction func onTap(_ sender: Any) {
-        view.endEditing(true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -69,8 +70,9 @@ class TipCalculatorViewController: UIViewController, UITextFieldDelegate {
     @IBAction func numOfPeopleValueChanged(_ sender: Any) {
         let numberOfPeople = numPeopleSlider.value * 100
         numberOfPeopleLabel.text! = String(format: "Split: %d", arguments: [Int(numberOfPeople)])
-        let splitPerPerson = tipCalc.totalAmount/Float(Int(numberOfPeople))
-        amountPerPerson.text! = String(format: "Each Person: $%.2f", arguments: [splitPerPerson])
+        calcTip()
+//        let splitPerPerson = tipCalc.totalAmount/Float(Int(numberOfPeople))
+//        amountPerPerson.text! = String(format: "Each Person: $%.2f", arguments: [splitPerPerson])
     }
     
     override func didReceiveMemoryWarning() {
